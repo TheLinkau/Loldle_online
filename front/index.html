@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Recherche de champion League of Legends</title>
+  <!-- Ajouter les liens vers les fichiers CSS de Bootstrap -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.2/css/bootstrap-theme.min.css">
+</head>
+<body>
+  <!-- Ajouter la classe 'container' pour centrer le contenu -->
+  <div class="container">
+    <h1 class="text-center">Recherche de champion League of Legends</h1>
+    <form id="recherche-form">
+      <div class="mb-3">
+        <label for="champion" class="form-label">Nom du champion :</label>
+        <input type="text" id="champion" name="champion" class="form-control">
+      </div>
+      <button type="submit" class="btn btn-primary">Rechercher</button>
+    </form>
+    <table id="resultats-table" class="table mt-3">
+      <thead>
+        <tr>
+          <th>Champion</th>
+          <th>Gender</th>
+          <th>Positions</th>
+          <th>Species</th>
+          <th>Resource</th>
+          <th>Range type</th>
+          <th>Region(s)</th>
+          <th>Release year</th>
+          <th>À qui de jouer ?</th>
+        </tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
+  </div>
+  <!-- Ajouter le lien vers le fichier JavaScript -->
+  <script src="app.js"></script>
+  <!-- Ajouter le lien vers le fichier JavaScript de Bootstrap -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
