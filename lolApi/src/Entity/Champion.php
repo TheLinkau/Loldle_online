@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 use App\Repository\ChampionRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -10,39 +11,49 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ChampionRepository::class)]
-#[ApiResource]
+#[ApiResource(normalizationContext: ['groups' => ['champion:read']])]
 class Champion
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['champion:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['champion:read'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['champion:read'])]
     private ?string $image = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['champion:read'])]
     private ?string $gender = null;
 
     #[ORM\Column()]
+    #[Groups(['champion:read'])]
     private ?int $releaseYear = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['champion:read'])]
     private ?string $resource = null;
 
     #[ORM\ManyToMany(targetEntity: Position::class, inversedBy: 'champions')]
+    #[Groups(['champion:read'])]
     private Collection $positions;
 
     #[ORM\ManyToMany(targetEntity: Species::class, inversedBy: 'champions')]
+    #[Groups(['champion:read'])]
     private Collection $species;
 
     #[ORM\ManyToMany(targetEntity: RangeType::class, inversedBy: 'champions')]
+    #[Groups(['champion:read'])]
     private Collection $rangeTypes;
 
     #[ORM\ManyToMany(targetEntity: Region::class, inversedBy: 'champions')]
+    #[Groups(['champion:read'])]
     private Collection $regions;
 
     public function __construct()
