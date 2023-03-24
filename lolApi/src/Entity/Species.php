@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 use App\Repository\SpeciesRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -18,6 +19,7 @@ class Species
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['champion:read'])]
     private ?string $name = null;
 
     #[ORM\ManyToMany(targetEntity: Champion::class, mappedBy: 'species')]
