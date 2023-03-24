@@ -21,5 +21,8 @@
   </style>
 </head>
 
+<script>
+    import { socketStore } from './socketStore';
+</script>
 
 <slot></slot>
