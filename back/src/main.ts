@@ -1,7 +1,6 @@
 
 import { config } from './config';
 import { RelationalDatabase } from './infrastructure/database';
-import { ExternalDependencies } from './infrastructure/routes';
 import { Server } from './infrastructure/server';
 
 (async () => {
@@ -12,12 +11,8 @@ import { Server } from './infrastructure/server';
     })
 
     const database = new RelationalDatabase(config)
-    const externalDependencies: ExternalDependencies = {
-        database
-    }
 
     const server: Server = new Server(config)
-    await server.init(externalDependencies)
 
     await server.start()
 })()

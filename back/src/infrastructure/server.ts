@@ -3,8 +3,7 @@ import express, { Application, Router } from 'express';
 import http from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import { Config } from '../config';
-import { ExternalDependencies, getRoutes } from './routes';
-import { SocketController } from '../contexts/book/infrastructure/controller/socker.controller';
+import { SocketController } from '../controller/socker.controller';
 
 export class Server {
     public expressServer: Application;
@@ -55,10 +54,6 @@ export class Server {
     private route(routes: Router[]) {
         // Load API routes
         this.expressServer.use('/api', routes);
-    }
-
-    async init(externalDependencies: ExternalDependencies): Promise<void> {
-        this.route(getRoutes(externalDependencies));
     }
 
     async start(): Promise<void> {
