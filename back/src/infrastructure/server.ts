@@ -1,50 +1,68 @@
-import bodyParser from 'body-parser'
-import express, { Application, Router } from 'express'
-import { Config } from '../config'
-import { ExternalDependencies, getRoutes } from './routes'
+import bodyParser from 'body-parser';
+import express, { Application, Router } from 'express';
+import http from 'http';
+import { Server as SocketIOServer } from 'socket.io';
+import { Config } from '../config';
+import { ExternalDependencies, getRoutes } from './routes';
+import { SocketController } from '../contexts/book/infrastructure/controller/socker.controller';
 
 export class Server {
-    public expressServer: Application
+    public expressServer: Application;
+    public httpServer: http.Server;
+    public socketIOServer: SocketIOServer;
+    public socketController: SocketController;
 
     constructor(private readonly config: Config) {
-        this.config = config
+        this.config = config;
 
-        this.expressServer = express()
+        this.expressServer = express();
+        this.httpServer = http.createServer(this.expressServer);
 
         this.expressServer.use(function (req, res, next) {
-            res.header("Access-Control-Allow-Origin", "*");
+            res.header('Access-Control-Allow-Origin', '*');
             res.header(
-                "Access-Control-Allow-Headers",
-                "Origin, X-Requested-With, Content-Type, Accept"
+                'Access-Control-Allow-Headers',
+                'Origin, X-Requested-With, Content-Type, Accept'
             );
             res.header(
-                "Access-Control-Allow-Methods",
-                "GET, POST, OPTIONS, PUT, DELETE"
+                'Access-Control-Allow-Methods',
+                'GET, POST, OPTIONS, PUT, DELETE'
             );
             next();
         });
+
+        this.socketIOServer = new SocketIOServer(this.httpServer, {
+            cors: {
+                origin: "*",
+            }
+        });
+        this.socketController = new SocketController(this.socketIOServer);
+
         /**
          * Health Check endpoints
          */
-        this.expressServer.get("/status", (req, res) => {
+        this.expressServer.get('/status', (req, res) => {
             res.status(200).end();
         });
 
         // Middleware that transforms the raw string of req.body into json
         this.expressServer.use(bodyParser.json());
+
+        // Initialize the Socket.IO controller
+        this.socketController.init();
     }
 
     private route(routes: Router[]) {
         // Load API routes
-        this.expressServer.use("/api", routes);
+        this.expressServer.use('/api', routes);
     }
 
     async init(externalDependencies: ExternalDependencies): Promise<void> {
-        this.route(getRoutes(externalDependencies))
+        this.route(getRoutes(externalDependencies));
     }
 
     async start(): Promise<void> {
-        this.expressServer.listen(this.config.server.port, () => {
+        this.httpServer.listen(this.config.server.port, () => {
             console.log(`
             ################################################
             🛡️  Server listening on port: ${this.config.server.port} 🛡️ 
