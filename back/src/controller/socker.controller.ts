@@ -1,4 +1,5 @@
 import { Server as SocketIOServer } from 'socket.io';
+import shortid from 'shortid';
 
 export class SocketController {
 
