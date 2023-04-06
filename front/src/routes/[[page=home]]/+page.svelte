@@ -8,7 +8,7 @@
     <div class="d-flex justify-content-center">
         <form id="recherche-form">
         <div class="mb-3">
-            <button type="submit" class="btn btn-primary">Créer une room</button>
+            <button on:click={create}>Créer une room</button>
         </div>
         </form>
     </div>
@@ -28,4 +28,22 @@
 </div>
 </div>
 
-<script></script>
+<script>
+	import { goto } from '$app/navigation';
+    import { socketStore } from '../socketStore';
+  
+    let socket;
+  
+    socketStore.subscribe(value => {
+        socket = value;
+
+        socket.on('roomCreated', (roomid) => {
+            goto('/game/' + roomid)
+        });
+    });
+
+    function create() {
+        socket.emit('createRoom');
+    }
+
+</script>
