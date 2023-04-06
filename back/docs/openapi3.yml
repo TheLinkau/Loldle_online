@@ -2,62 +2,77 @@ openapi: 3.0.0
 # Added by API Auto Mocking Plugin
 servers:
   - description: localhost
-    url: http://localhost:3000/api/v1
+    url: http://localhost:3002/api/
 info:
-  description: Cloud TP1
+  description: Microservice d'authentification pour le jeu Loldle online
   version: "1.0.0"
-  title: Cloud TP1
+  title: Loldle online authentification
   contact:
-    email: nocompany@gmail.com
+    email: jean-yves.legras@universite-paris-saclay.fr
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
 tags:
-  - name: books
-    description: API pour mes bouquins
+  - name: player
+    description: API pour gérer les joueurs inscrits et les connexion
 paths:
-  /inventory:
-    get:
+  /api/player/login:
+    post:
       tags:
-        - books
-      summary: récupère tous les livres
-      operationId: searchAll
-      description: récupère tous les livres
+        - player
+      summary: Connecter un joueur existant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                mdp:
+                  type: string
+              required:
+                - id
+                - mdp
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Book'
-components:
-  schemas:
-    Book:
-      type: object
-      required:
-        - id
-        - title
-        - description
-        - createdAt
-        - updatedAt
-      properties:
-        id:
-          type: string
-          format: id
-          example: 42
-        title:
-          type: string
-          example: Lord of the ring
-        description:
-          type: string
-          example: Somebody lost his rings
-        createdAt:
-          type: string
-          format: date-time
-          example: '2016-08-29T09:12:33.001Z'
-        updatedAt:
-          type: string
-          format: date-time
-          example: '2016-08-29T09:12:33.001Z'
+          description: Succès
+        '400':
+          description: Mauvais arguments
+        '401':
+          description: Mauvais mot de passe
+        '404':
+          description: Id non trouvé
+        '500':
+          description: Erreur interne
+
+  /api/player/sign_up:
+    post:
+      tags:
+        - player
+      summary: Créer un nouveau joueur
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                mdp:
+                  type: string
+                pseudo:
+                  type: string
+              required:
+                - id
+                - mdp
+                - pseudo
+      responses:
+        '200':
+          description: Succès
+        '400':
+          description: Mauvais arguments OU id déjà utilisé
+        '500':
+          description: Erreur interne
