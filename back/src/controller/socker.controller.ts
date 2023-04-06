@@ -1,11 +1,17 @@
 import { Server as SocketIOServer } from 'socket.io';
+import { GetOneChampUseCase } from "../use-cases/get-champ";
+import { LogicGameUseCase } from "../use-cases/logic-game";
 import shortid from 'shortid';
 
 export class SocketController {
+    constructor(
+        private readonly socketIOServer: SocketIOServer,
+        private readonly getOneChampUseCase: GetOneChampUseCase,
+        private readonly logicGameUseCase: LogicGameUseCase
 
-    constructor(private readonly socketIOServer: SocketIOServer) { }
-
+    ) { }
     public currentRoomId = "string";
+    public currentPlayer:string = "";
 
     init(): void {
         this.socketIOServer.on('connection', (socket) => {
@@ -15,7 +21,7 @@ export class SocketController {
             socket.on('acceptInvitation', (roomId) => {
                 // Join the game room
                 socket.join(roomId);
-
+                
                 // Send confirmation message to client
                 socket.emit('invitationAccepted', roomId);
                 this.socketIOServer.to(roomId).emit('roomJoined', "a user has joined the room");
@@ -34,6 +40,26 @@ export class SocketController {
                 // Send id for redirection
                 socket.emit('roomCreated', roomId);
             });
+            
+            socket.on('Start', () => {
+                const nextPlayer = this.logicGameUseCase.start(this.currentRoomId);
+
+                // Send confirmation message to client
+                socket.emit('nextPlayer', nextPlayer)
+            });
+
+            socket.on('ChampSelect', (Champ) => {
+                // Get the champ
+                const res = this.logicGameUseCase.guess(Champ, this.currentRoomId);
+                const currentPlayer =  this.logicGameUseCase.nextPlayer(this.currentRoomId);
+                // Send confirmation message to client
+                socket.emit('feedbackChamp', res);
+                socket.emit('nextPlayer', currentPlayer);
+                this.socketIOServer.to(this.currentRoomId).emit('roomJoined', "a user has joined the room");
+
+            });
+
+
 
             // Add more event handlers here as needed
         });

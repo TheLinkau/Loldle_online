@@ -35,4 +35,49 @@
 </div>
 </div>
 
-<script></script>
+<script>
+let currentPlayer = "";
+socket.on('feedbackChamp', (res,curPlayer) => {
+
+    console.log(res.name);
+    currentPlayer = curPlayer;
+
+    const table = document.getElementById("resultats-table");
+    const row = table.insertRow(-1);
+
+    const nameCell = row.insertCell(0);
+    nameCell.innerHTML = res.name;
+
+    const genderCell = row.insertCell(1);
+    genderCell.innerHTML = res.gender;
+
+    const positionCell = row.insertCell(2);
+    positionCell.innerHTML = res.position;
+
+    const speciesCell = row.insertCell(3);
+    speciesCell.innerHTML = res.species;
+
+    const resourceCell = row.insertCell(4);
+    resourceCell.innerHTML = res.ressource;
+
+    const rangeTypeCell = row.insertCell(5);
+    rangeTypeCell.innerHTML = res.RangeType;
+
+    const regionCell = row.insertCell(6);
+    regionCell.innerHTML = res.Region;
+
+    const dateCell = row.insertCell(7);
+    dateCell.innerHTML = res.date;
+});
+
+// Handle sending messages
+const form = document.querySelector('#recherche-form');
+form.addEventListener('submitChamp', (e) => {
+    e.preventDefault();
+    const input = document.querySelector('#message-input');
+    const message = input.value;
+    input.value = '';
+    socket.emit('ChampSelect', message);
+});
+
+</script>

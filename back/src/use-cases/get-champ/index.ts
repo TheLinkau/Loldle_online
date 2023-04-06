@@ -1,0 +1,1 @@
+export * from './get-one-champ.use-case'
