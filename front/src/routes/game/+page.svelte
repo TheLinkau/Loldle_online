@@ -1,3 +1,9 @@
+<head>
+<script>
+console.log(document.cookie);
+</script>
+</head>
+
 <div class="bg-image d-flex align-items-center justify-content-center text-white">
 <div class="container">
 

@@ -37,7 +37,7 @@ export class PlayerController {
     }
 
     async sign_up(req: Request, res: Response) {
-        console.log("PlayerController::sign_up body: ",req.body);
+        // console.log("PlayerController::sign_up body: ",req.body);
         const { id, mdp, pseudo } = req.body;
 
         const newPlayer: player = { id, mdp, pseudo };
