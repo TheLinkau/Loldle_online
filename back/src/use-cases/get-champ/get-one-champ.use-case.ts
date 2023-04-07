@@ -25,10 +25,9 @@ export class GetOneChampUseCase {
         if (!process.env.CHAMPIONS_URL) {
             throw new Error('Pas d\'url api champions en variable d\'environnement');
         }
-        const response = await fetch(process.env.CHAMPIONS_URL);
-        const data = await response.json();
-        const rawChamps = data['hydra:member']
-        return rawChamps.map((champion: any) => new Champion(
+        const response = await import('node-fetch').then(module => module.default(process.env.CHAMPIONS_URL!));
+        const data = await response.json() as { 'hydra:member': any[] };
+        return data['hydra:member'].map((champion: any) => new Champion(
             champion.name,
             champion.imageBase64,
             champion.gender,
