@@ -8,7 +8,7 @@
     <div class="row">
         <div class="col-md-4">
         <h2>Connexion</h2>
-        <form method="POST" action="login.php">
+        <div>
             <div class="form-group my-2">
             <label>Nom d'utilisateur:</label>
             <input type="text" name="username" class="form-control">
@@ -17,18 +17,23 @@
             <label>Mot de passe:</label>
             <input type="password" name="password" class="form-control">
             </div>
-            <button type="submit" name="login" class="btn btn-primary">Connexion</button>
-        </form>
+            <button onclick="sendLoginForm()" name="login" class="btn btn-primary">Connexion</button>
+        </div>
+        <div id="error_msg_login"></div>
         </div>
 
         <div class="col-md-4"></div>
 
         <div class="col-md-4">
         <h2>Inscription</h2>
-        <form method="POST" action="signup.php">
+        <div>
             <div class="form-group my-2">
-            <label>Nom d'utilisateur:</label>
+            <label>Nom d'utilisateur (non public):</label>
             <input type="text" name="username" class="form-control">
+            </div>
+            <div class="form-group my-2">
+            <label>Pseudo (visible par tous):</label>
+            <input type="text" name="pseudo" class="form-control">
             </div>
             <div class="form-group my-2">
             <label>Mot de passe:</label>
@@ -38,8 +43,9 @@
             <label>Confirmer le mot de passe:</label>
             <input type="password" name="confirm_password" class="form-control">
             </div>
-            <button type="submit" name="signup" class="btn btn-primary">Inscription</button>
-        </form>
+            <button onclick="sendSignupForm()" name="signup" class="btn btn-primary">Inscription</button>
+        </div>
+        <div id="error_msg_signup"></div>
         </div>
 
     </div>
