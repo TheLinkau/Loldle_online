@@ -1,17 +1,48 @@
 import { Champion } from "../../models/champion";
-
+import fetch from 'node-fetch';
 
 export class GetOneChampUseCase {
 
-    getChampTofind(): Champion{
-        let champion = new Champion("Aatrox", "zzz", "Male", ["Top"], ["Darkin"], "Manaless", ["Mele"], ["Runetterra"], 2013);
+    public static listChampions = new Array<Champion>();
 
-        return champion;
+    constructor() {
+        (async () => {
+            if (GetOneChampUseCase.listChampions.length === 0) {
+                GetOneChampUseCase.listChampions = await GetOneChampUseCase.fetchChampions();
+            }
+        })();
     }
 
-    getChampSelect(id: string) {        
-        let champion = new Champion("Aatrox", "zzz", "Male", ["Top"], ["Darkin"], "Manaless", ["Mele"], ["Runetterra"], 2013);
+    getChampTofind(): Champion{
+        return this.getRandomHero();
+    }
 
-        return champion;
+    getChampSelect(nameChamp: string) {        
+        return GetOneChampUseCase.listChampions.find(c => c.name == nameChamp);
+    }
+
+    static async fetchChampions(): Promise<Champion[]> {
+        if (!process.env.CHAMPIONS_URL) {
+            throw new Error('Pas d\'url api champions en variable d\'environnement');
+        }
+        const response = await fetch(process.env.CHAMPIONS_URL);
+        const data = await response.json();
+        const rawChamps = data['hydra:member']
+        return rawChamps.map((champion: any) => new Champion(
+            champion.name,
+            champion.imageBase64,
+            champion.gender,
+            champion.positions.map((p: { name: string; }) => p.name),
+            champion.species.map((p: { name: string; }) => p.name),
+            champion.resource,
+            champion.rangeTypes.map((p: { name: string; }) => p.name),
+            champion.regions.map((p: { name: string; }) => p.name),
+            champion.releaseYear
+        ));
+    }
+
+    getRandomHero(): Champion {
+        const randomIndex = Math.floor(Math.random() * GetOneChampUseCase.listChampions.length);
+        return GetOneChampUseCase.listChampions[randomIndex];
     }
 }

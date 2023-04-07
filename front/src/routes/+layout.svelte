@@ -85,10 +85,22 @@
 </head>
 
 <script>
+    
     import { onMount } from 'svelte';
     import { initModule } from './socketStore';
 
-    onMount(initModule);
+    onMount(() => {
+        setCookie('jwt', Math.random().toString(36).slice(2))
+        initModule();
+    });
+        
+    // For testing purpose
+    // @ts-ignore
+    function setCookie(key, value) {
+        const cookieString = `${key}=${value}`;
+        document.cookie = cookieString;
+    }
+
 </script>
 
 <slot></slot>

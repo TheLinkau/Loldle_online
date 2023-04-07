@@ -7,7 +7,7 @@ export class LogicGameUseCase {
     constructor(
         private readonly getOneChampUseCase: GetOneChampUseCase
     ) { }
-    public static listGameSession = new Map<string,Session>();
+    public static listGameSession = new Map<string, Session>();
 
     async initGameSession(player: string, currentRoomId: string){
         const champTofind = this.getOneChampUseCase.getChampTofind();
@@ -45,6 +45,11 @@ export class LogicGameUseCase {
     start(currentRoomId: string):string{
         return this.nextPlayer(currentRoomId);
     }
+
+    deleteSession(roomId: string) {
+        LogicGameUseCase.listGameSession.delete(roomId);
+    }
+
     async guess(nameChamp: string, currentRoomId: string){
        let championSelect = this.getOneChampUseCase.getChampSelect(nameChamp);
        let championToGuess = LogicGameUseCase.listGameSession.get(currentRoomId)!.getChampToGuess();

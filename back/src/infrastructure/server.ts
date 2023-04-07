@@ -4,12 +4,16 @@ import http from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import { Config } from '../config';
 import { SocketController } from '../controller/socker.controller';
+import { GetOneChampUseCase } from "../use-cases/get-champ";
+import { LogicGameUseCase } from "../use-cases/logic-game";
 
 export class Server {
     public expressServer: Application;
     public httpServer: http.Server;
     public socketIOServer: SocketIOServer;
     public socketController: SocketController;
+    public getChampUseCase: GetOneChampUseCase;
+    public logicGameUseCase: LogicGameUseCase;
 
     constructor(private readonly config: Config) {
         this.config = config;
@@ -35,7 +39,9 @@ export class Server {
                 origin: "*",
             }
         });
-        this.socketController = new SocketController(this.socketIOServer);
+        this.getChampUseCase = new GetOneChampUseCase()
+        this.logicGameUseCase = new LogicGameUseCase(this.getChampUseCase)
+        this.socketController = new SocketController(this.socketIOServer, this.getChampUseCase, this.logicGameUseCase);
 
         /**
          * Health Check endpoints

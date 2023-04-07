@@ -41,8 +41,9 @@
 
 <script>
 	import { page } from '$app/stores';
-    import { onMount } from 'svelte';
+    import { onDestroy, onMount } from 'svelte';
     import { socketStore } from '../../socketStore';
+	import { goto } from '$app/navigation';
   
     /**
 	 * @type {import("socket.io-client").Socket<import("@socket.io/component-emitter").DefaultEventsMap, import("@socket.io/component-emitter").DefaultEventsMap>}
@@ -57,6 +58,10 @@
 
         socket.on('nextPlayer', (player) => {
             currentPlayer = player;
+        });
+
+        socket.on('close', () => {
+            goto('/home/')
         });
 
         socket.on('feedbackChamp', (res) => {
@@ -92,8 +97,6 @@
     });
 
     onMount(() =>  {
-      console.log($page.params.id);
-      // setCookie('jwt', 'azertyuiop')
       readCookie();
     });
 
@@ -130,11 +133,10 @@
         }
     }
 
-    // For testing purpose
-    // @ts-ignore
-    function setCookie(key, value) {
-        const cookieString = `${key}=${value}`;
-        document.cookie = cookieString;
+    function end() {
+        socket.emit('leaveSession')
     }
+
+    onDestroy(end);
 
 </script>

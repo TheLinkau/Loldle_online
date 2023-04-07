@@ -13,17 +13,21 @@
         </form>
     </div>
 
-    <table id="resultats-table" class="table mt-3 text-white">
-    <thead>
-        <tr>
-            <th>Nom de la room</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        
-    </tbody>
-    </table>
+    <ul class="list-group">
+    {#each sessions as session}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+        <span>Session ID: {session.roomId}</span>
+        <span>Player count: {session.nbPlayer}/2 </span>
+        <button 
+            class="btn btn-primary" 
+            disabled={session.nbPlayer >= 2}
+            on:click={() => join(session.roomId)}
+        >
+            Join
+        </button>
+        </li>
+    {/each}
+    </ul>
 
 </div>
 </div>
@@ -36,19 +40,42 @@
 	 * @type {import("socket.io-client").Socket<import("@socket.io/component-emitter").DefaultEventsMap, import("@socket.io/component-emitter").DefaultEventsMap>}
 	 */
     let socket;
+    
+    /**
+	 * @type {any[]}
+	 */
+    let sessions = []
   
     socketStore.subscribe(value => {
         socket = value;
 
         if (socket) {
+            socket.emit('getSessions');
+
             socket.on('roomCreated', (roomid) => {
-            goto('/game/' + roomid)
-        });
+                goto('/game/' + roomid)
+            });
+
+            socket.on('roomJoined', (roomid) => {
+                goto('/game/' + roomid)
+            });
+
+            socket.on('majListSessions', (list) => {
+                sessions = list;
+            });
         }
+
     });
 
     function create() {
         socket.emit('createRoom');
+    }
+
+    /**
+	 * @param {string} roomId
+	 */
+    function join(roomId) {
+        socket.emit('JoinRoom', roomId);
     }
 
 </script>

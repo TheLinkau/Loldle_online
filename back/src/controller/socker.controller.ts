@@ -8,7 +8,6 @@ export class SocketController {
         private readonly socketIOServer: SocketIOServer,
         private readonly getOneChampUseCase: GetOneChampUseCase,
         private readonly logicGameUseCase: LogicGameUseCase
-
     ) { }
     public currentRoomId = "";
     public currentPlayer: string = "";
@@ -45,6 +44,11 @@ export class SocketController {
 
                     // Send id for redirection
                     socket.emit('roomCreated', roomId);
+                    const listSession = Array.from(LogicGameUseCase.listGameSession, ([key, value]) => ({
+                        roomId: key,
+                        nbPlayer: value.players.length
+                    }));
+                    this.socketIOServer.emit('majListSessions', listSession)
                 }
             });
             
@@ -53,6 +57,14 @@ export class SocketController {
 
                 // Send confirmation message to client
                 socket.emit('nextPlayer', nextPlayer)
+            });
+
+            socket.on('getSessions', () => {
+                const listSession = Array.from(LogicGameUseCase.listGameSession, ([key, value]) => ({
+                    roomId: key,
+                    nbPlayer: value.players.length
+                }));
+                socket.emit('majListSessions', listSession)
             });
 
             socket.on('ChampSelect', (Champ) => {
@@ -65,9 +77,34 @@ export class SocketController {
                 this.socketIOServer.to(this.currentRoomId).emit('roomJoined', "a user has joined the room");
             });
 
+            socket.on('JoinRoom', (roomId) => {
+                this.currentRoomId = roomId;
+                socket.join(roomId);
+                this.logicGameUseCase.joinGameSession(this.currentPlayer, roomId);
+                const listSession = Array.from(LogicGameUseCase.listGameSession, ([key, value]) => ({
+                    roomId: key,
+                    nbPlayer: value.players.length
+                }));
+                this.socketIOServer.emit('majListSessions', listSession)
+                socket.emit('roomJoined', roomId);
+            });
 
+            socket.on('leaveSession', () => {
+                this.socketIOServer.to(this.currentRoomId).emit('close');
+                const sockets = this.socketIOServer.sockets.adapter.rooms.get(this.currentRoomId);
+                if (sockets) {
+                    for (const socketId of sockets.keys()) {
+                        this.socketIOServer.sockets.sockets.get(socketId)?.leave(this.currentRoomId);
+                    }
+                }
+                this.logicGameUseCase.deleteSession(this.currentRoomId);
+                const listSession = Array.from(LogicGameUseCase.listGameSession, ([key, value]) => ({
+                    roomId: key,
+                    nbPlayer: value.players.length
+                }));
+                this.socketIOServer.emit('majListSessions', listSession)
+            });
 
-            // Add more event handlers here as needed
         });
     }
 }
