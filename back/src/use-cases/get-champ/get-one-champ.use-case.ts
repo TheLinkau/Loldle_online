@@ -17,8 +17,8 @@ export class GetOneChampUseCase {
         return this.getRandomHero();
     }
 
-    getChampSelect(nameChamp: string) {        
-        return GetOneChampUseCase.listChampions.find(c => c.name == nameChamp);
+    getChampSelect(nameChamp: string): Champion {        
+        return GetOneChampUseCase.listChampions.find(c => c.name == nameChamp)!;
     }
 
     static async fetchChampions(): Promise<Champion[]> {
