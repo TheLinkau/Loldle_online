@@ -22,7 +22,10 @@
 </head>
 
 <script>
-    import { socketStore } from './socketStore';
+    import { onMount } from 'svelte';
+    import { initModule } from './socketStore';
+
+    onMount(initModule);
 </script>
 
 <slot></slot>

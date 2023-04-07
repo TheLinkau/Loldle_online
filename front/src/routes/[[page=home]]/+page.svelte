@@ -32,14 +32,19 @@
 	import { goto } from '$app/navigation';
     import { socketStore } from '../socketStore';
   
+    /**
+	 * @type {import("socket.io-client").Socket<import("@socket.io/component-emitter").DefaultEventsMap, import("@socket.io/component-emitter").DefaultEventsMap>}
+	 */
     let socket;
   
     socketStore.subscribe(value => {
         socket = value;
 
-        socket.on('roomCreated', (roomid) => {
+        if (socket) {
+            socket.on('roomCreated', (roomid) => {
             goto('/game/' + roomid)
         });
+        }
     });
 
     function create() {

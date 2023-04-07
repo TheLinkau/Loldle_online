@@ -53,7 +53,7 @@ export class LogicGameUseCase {
        res.name = championSelect.name;
        res.img = championSelect.img;
 
-       if(championSelect.name == championToGuess?.name){
+        if (championSelect.name.toLowerCase() == championToGuess?.name.toLowerCase()){
             res.gender = [1, championSelect.gender];
             res.position = [1, championSelect.position];
             res.species = [1, championSelect.species];
