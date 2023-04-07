@@ -1,6 +1,6 @@
 
 import { config } from './config';
-import { RelationalDatabase } from './infrastructure/database';
+import { RelationalDatabase } from './infrastructure/database/database';
 import { Server } from './infrastructure/server';
 
 (async () => {
@@ -13,6 +13,7 @@ import { Server } from './infrastructure/server';
     const database = new RelationalDatabase(config)
 
     const server: Server = new Server(config)
+    await server.init(database)
 
     await server.start()
 })()

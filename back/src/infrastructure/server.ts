@@ -3,7 +3,9 @@ import express, { Application, Router } from 'express';
 import http from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import { Config } from '../config';
+import { getRoutes } from './routes';
 import { SocketController } from '../controller/socker.controller';
+import { RelationalDatabase } from './database/database';
 
 export class Server {
     public expressServer: Application;
@@ -54,6 +56,10 @@ export class Server {
     private route(routes: Router[]) {
         // Load API routes
         this.expressServer.use('/api', routes);
+    }
+
+    async init(database: RelationalDatabase): Promise<void> {
+        this.route(getRoutes(database));
     }
 
     async start(): Promise<void> {
